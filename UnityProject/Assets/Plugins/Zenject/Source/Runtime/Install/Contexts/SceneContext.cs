@@ -307,8 +307,21 @@ namespace Zenject
                 UIDocument[] uiDocuments = rootObjectsInScene[i].GetComponentsInChildren<UIDocument>(true);
                 for (int j = 0; j < uiDocuments.Length; j++)
                 {
+                    if (uiDocuments[j].rootVisualElement == null)
+                    {
+                        StartCoroutine(queueUIDocumentToInject(uiDocuments[j], _container));
+                        continue;
+                    }
+
                     uiDocuments[j].rootVisualElement.Query().ForEach(x => _container.QueueForInject(x));
                 }
+            }
+
+            static IEnumerator queueUIDocumentToInject(UIDocument doc, DiContainer _container)
+            {
+                yield return new WaitUntil(() => doc.rootVisualElement != null, 2.Minutes(), () => { Debug.LogWarning("Timeout exceeded"); });
+
+                doc.rootVisualElement.Query().ForEach(x => _container.QueueForInject(x));
             }
 #endif
 

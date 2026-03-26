@@ -319,7 +319,7 @@ namespace Zenject
 
             static IEnumerator queueUIDocumentToInject(UIDocument doc, DiContainer _container)
             {
-                yield return new WaitUntil(() => doc.rootVisualElement != null, 2.Minutes(), () => { Debug.LogWarning("Timeout exceeded"); });
+                yield return new WaitUntil(() => doc.rootVisualElement != null, TimeSpan.FromMinutes(2), () => { Debug.LogWarning("Timeout exceeded"); });
 
                 doc.rootVisualElement.Query().ForEach(x => _container.QueueForInject(x));
             }
